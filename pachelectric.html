@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>PachElectric — Prototipo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-dark: #0F6E56;
+    --green-light: #E1F5EE;
+    --green-mid: #5DCAA5;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --red: #E24B4A;
+    --red-light: #FCEBEB;
+    --gray: #888780;
+    --gray-light: #F1EFE8;
+    --text: #1a1a1a;
+    --text-2: #666;
+    --text-3: #999;
+    --border: rgba(0,0,0,0.1);
+    --card: #fff;
+    --bg: #f4f7f5;
+    --surface: #fff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    padding: 20px;
+  }
+
+  .stage {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .device {
+    width: 320px;
+    background: #0d0d0d;
+    border-radius: 48px;
+    padding: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25), inset 0 0 0 1px #2a2a2a;
+  }
+
+  .screen {
+    background: var(--surface);
+    border-radius: 36px;
+    overflow: hidden;
+    height: 640px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 0; align-items: stretch; background: var(--surface); }
+    .stage { flex-direction: column; gap: 0; width: 100%; min-height: 100vh; min-height: -webkit-fill-available; }
+    .phone-wrap { flex: 1; width: 100%; gap: 0; }
+    .device { width: 100%; border-radius: 0; padding: 0; background: var(--surface); box-shadow: none; }
+    .screen { border-radius: 0; height: 100vh; height: -webkit-fill-available; }
+    .notch { display: none; }
+    .sb { padding-top: max(44px, env(safe-area-inset-top, 44px)) !important; }
+    .sc { padding-bottom: max(14px, env(safe-area-inset-bottom, 14px)); }
+    .nav-bar { padding-bottom: max(8px, env(safe-area-inset-bottom, 8px)); }
+    .sidebar { display: none; }
+    .mobile-nav { display: flex !important; }
+  }
+
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    left: 50%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    background: #111;
+    border-radius: 40px;
+    padding: 8px 10px;
+    gap: 4px;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mnb {
+    background: transparent;
+    border: none;
+    color: #999;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    padding: 6px 10px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+
+  .mnb.on { background: var(--green); color: white; }
+
+  .screen-inner {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .screen-inner.active { display: flex; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+
+  .sb {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+
+  .notch {
+    width: 80px;
+    height: 22px;
+    background: #0d0d0d;
+    border-radius: 0 0 14px 14px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .sc {
+    padding: 10px 18px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .nav-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0 8px;
+    border-top: 0.5px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+
+  .ni {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+    color: var(--text-3);
+    cursor: pointer;
+    padding: 0 12px;
+  }
+
+  .ni.on { color: var(--green); }
+
+  .ni-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ni.on .ni-dot { background: var(--green-light); }
+
+  .btn {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.1s;
+    text-align: center;
+  }
+
+  .btn:active { transform: scale(0.97); opacity: 0.85; }
+
+  .btn-primary { background: var(--green); color: white; }
+  .btn-secondary { background: transparent; border: 0.5px solid var(--green); color: var(--green-dark); }
+  .btn-danger { background: var(--red); color: white; }
+
+  .card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+
+  .card-green {
+    background: var(--green-light);
+    border: 0.5px solid var(--green-mid);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .pill-green { background: var(--green-light); color: var(--green-dark); }
+  .pill-amber { background: var(--amber-light); color: var(--amber); }
+  .pill-gray { background: var(--gray-light); color: var(--gray); }
+  .pill-red { background: var(--red-light); color: var(--red); }
+
+  .inp {
+    width: 100%;
+    background: #f7f9f8;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .inp:focus { border-color: var(--green); }
+
+  .inp-fake {
+    background: #f7f9f8;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  .row { display: flex; align-items: center; gap: 8px; }
+  .row-between { display: flex; align-items: center; justify-content: space-between; }
+  .divider { height: 0.5px; background: var(--border); }
+
+  .title { font-size: 17px; font-weight: 600; color: var(--text); }
+  .label { font-size: 11px; color: var(--text-2); }
+  .label-sm { font-size: 10px; color: var(--text-3); }
+  .body { font-size: 13px; color: var(--text); }
+  .body-sm { font-size: 11px; color: var(--text-2); }
+
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .metric { background: #f7f9f8; border-radius: 10px; padding: 10px; text-align: center; }
+  .metric-val { font-size: 18px; font-weight: 600; color: var(--green); }
+  .metric-lbl { font-size: 9px; color: var(--text-3); margin-top: 2px; }
+
+  .map-area {
+    background: #d8ead8;
+    border-radius: 14px;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .road-h { position: absolute; height: 8px; left: 0; right: 0; background: #eaf2ea; }
+  .road-v { position: absolute; width: 8px; top: 0; bottom: 0; background: #eaf2ea; }
+
+  .pin {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2.5px solid white;
+    cursor: pointer;
+    transition: transform 0.15s;
+    z-index: 2;
+  }
+
+  .pin:hover { transform: scale(1.3); }
+  .pin-green { background: var(--green); }
+  .pin-amber { background: var(--amber); }
+  .pin-gray { background: var(--gray); }
+  .user-dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #185FA5; border: 2.5px solid white; z-index: 3; }
+
+  .map-legend {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: white;
+    border-radius: 8px;
+    padding: 6px 10px;
+    border: 0.5px solid var(--border);
+    display: flex;
+    gap: 8px;
+  }
+
+  .map-popup {
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    right: 10px;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 12px;
+    border: 0.5px solid var(--border);
+    display: none;
+  }
+
+  .map-popup.visible { display: block; animation: slideUp 0.2s ease; }
+  @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .qr-frame {
+    width: 140px;
+    height: 140px;
+    border: 2px solid var(--green);
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .qr-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+  }
+
+  .qr-corner-tl { top: 6px; left: 6px; border-top: 2.5px solid var(--green); border-left: 2.5px solid var(--green); border-radius: 3px 0 0 0; }
+  .qr-corner-tr { top: 6px; right: 6px; border-top: 2.5px solid var(--green); border-right: 2.5px solid var(--green); border-radius: 0 3px 0 0; }
+  .qr-corner-bl { bottom: 6px; left: 6px; border-bottom: 2.5px solid var(--green); border-left: 2.5px solid var(--green); border-radius: 0 0 0 3px; }
+  .qr-corner-br { bottom: 6px; right: 6px; border-bottom: 2.5px solid var(--green); border-right: 2.5px solid var(--green); border-radius: 0 0 3px 0; }
+
+  .qr-grid { display: grid; grid-template-columns: repeat(6,12px); gap: 2px; }
+  .qr-cell { width: 12px; height: 12px; border-radius: 2px; }
+
+  .timer-ring { display: block; margin: 0 auto; }
+
+  .tipo-option {
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .tipo-option.selected {
+    border-color: var(--green);
+    background: #fafffe;
+  }
+
+  .bloques { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+  .bloque {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 0.5px solid var(--border);
+    background: #f7f9f8;
+    color: var(--text-2);
+    transition: background 0.1s;
+  }
+
+  .bloque.on { background: var(--green); color: white; border-color: var(--green); }
+
+  .stars { display: flex; gap: 6px; justify-content: center; margin: 8px 0; }
+  .star { font-size: 28px; cursor: pointer; color: #ddd; transition: color 0.1s; }
+  .star.lit { color: #EF9F27; }
+
+  .info-panel {
+    background: #f7f9f8;
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .section-title { font-size: 12px; font-weight: 600; color: var(--text-2); letter-spacing: 0.5px; }
+
+  .back-btn {
+    width: 28px;
+    height: 28px;
+    background: #f7f9f8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    font-size: 13px;
+    color: var(--text-2);
+    flex-shrink: 0;
+  }
+
+  .toast {
+    position: absolute;
+    top: 50px;
+    left: 18px;
+    right: 18px;
+    background: var(--text);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    text-align: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .sidebar {
+    width: 240px;
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    border: 0.5px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  .sidebar h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 0 -8px;
+  }
+
+  .flow-step:hover { background: #f7f9f8; }
+  .flow-step.active-step { background: var(--green-light); }
+
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-2);
+    flex-shrink: 0;
+  }
+
+  .flow-step.active-step .step-num { background: var(--green); color: white; }
+
+  .step-info { flex: 1; }
+  .step-name { font-size: 12px; font-weight: 500; color: var(--text); }
+  .step-desc { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <!-- Phone -->
+  <div class="phone-wrap">
+    <div class="device">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="toast" id="toast"></div>
+
+        <!-- SCREEN 1: ONBOARDING -->
+        <div class="screen-inner active" id="s-onboarding">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="gap:12px;">
+            <div style="text-align:center;padding:6px 0;">
+              <div style="width:54px;height:54px;border-radius:18px;background:var(--green);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="white"/></svg>
+              </div>
+              <div style="font-size:20px;font-weight:600;color:var(--text);">PachElectric</div>
+              <div style="font-size:11px;color:var(--text-3);margin-top:3px;">Carga tu vehículo donde quieras</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <div id="rol-conductor" onclick="selectRol('conductor')" style="flex:1;background:var(--green);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;border:2px solid var(--green);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="display:block;margin:0 auto 5px;"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#9FE1CB" stroke-width="1.5"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#9FE1CB" stroke-width="1.5"/></svg>
+                <div style="font-size:11px;font-weight:500;color:white;">Soy conductor</div>
+                <div style="font-size:9px;color:#9FE1CB;margin-top:2px;">Busco enchufes</div>
+              </div>
+              <div id="rol-proveedor" onclick="selectRol('proveedor')" style="flex:1;background:#f7f9f8;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;border:2px solid transparent;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="display:block;margin:0 auto 5px;"><circle cx="12" cy="12" r="9" stroke="var(--green)" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <div style="font-size:11px;font-weight:500;color:var(--text);">Soy proveedor</div>
+                <div style="font-size:9px;color:var(--text-3);margin-top:2px;">Tengo enchufes</div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <input class="inp" placeholder="Nombre completo" />
+              <input class="inp" placeholder="Correo electrónico" type="email" />
+              <input class="inp" placeholder="+56 9 XXXX XXXX" type="tel" />
+              <input class="inp" placeholder="Contraseña" type="password" />
+            </div>
+            <button class="btn btn-primary" onclick="goTo('mapa')" style="margin-top:auto;">Crear cuenta</button>
+            <div style="text-align:center;font-size:11px;color:var(--text-3);">¿Ya tienes cuenta? <span onclick="goTo('mapa')" style="color:var(--green);cursor:pointer;font-weight:500;">Iniciar sesión</span></div>
+          </div>
+        </div>
+
+        <!-- SCREEN 2: MAPA -->
+        <div class="screen-inner" id="s-mapa">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="padding-bottom:0;">
+            <div class="row-between">
+              <div class="title">Enchufes cercanos</div>
+              <div class="pill pill-green">12 disponibles</div>
+            </div>
+            <div class="inp-fake" style="font-size:12px;">Buscar dirección o lugar...</div>
+            <div class="map-area" id="map-area">
+              <div class="road-h" style="top:38%;"></div>
+              <div class="road-h" style="top:64%;"></div>
+              <div class="road-v" style="left:28%;"></div>
+              <div class="road-v" style="left:62%;"></div>
+              <div class="pin pin-green" style="top:22%;left:22%;" onclick="showMapPopup('Farmacia Salcobrand','220m','$350/10 min','libre')"></div>
+              <div class="pin pin-green" style="top:16%;left:58%;" onclick="showMapPopup('Copec El Golf','480m','$300/10 min','libre')"></div>
+              <div class="pin pin-amber" style="top:52%;left:42%;" onclick="showMapPopup('Casa particular · R. López','800m','$280/10 min','ocupado')"></div>
+              <div class="pin pin-green" style="top:72%;left:18%;" onclick="showMapPopup('Mall Costanera','1.2km','$400/10 min','libre')"></div>
+              <div class="pin pin-gray" style="top:76%;left:68%;" onclick="showMapPopup('Hotel Marriott','1.8km','$450/10 min','inactivo')"></div>
+              <div class="user-dot" style="top:47%;left:48%;"></div>
+              <div class="map-legend">
+                <div class="row" style="gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);"></div><span style="font-size:8px;color:var(--text-2);">Libre</span></div>
+                <div class="row" style="gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--amber);"></div><span style="font-size:8px;color:var(--text-2);">Ocupado</span></div>
+                <div class="row" style="gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--gray);"></div><span style="font-size:8px;color:var(--text-2);">Inactivo</span></div>
+              </div>
+              <div class="map-popup" id="map-popup">
+                <div class="row-between" style="margin-bottom:6px;">
+                  <div>
+                    <div style="font-size:12px;font-weight:600;color:var(--text);" id="popup-name">Farmacia Salcobrand</div>
+                    <div style="font-size:10px;color:var(--text-3);" id="popup-dist">220m · $350/10 min</div>
+                  </div>
+                  <div class="pill pill-green" id="popup-status">Libre</div>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button class="btn btn-secondary" style="flex:1;padding:8px;font-size:11px;" onclick="goTo('qr')">Conectar</button>
+                  <button class="btn btn-primary" style="flex:2;padding:8px;font-size:11px;" onclick="goTo('qr')">Reservar y navegar</button>
+                </div>
+              </div>
+            </div>
+            <div class="nav-bar">
+              <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3l9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.5"/></svg></div>Inicio</div>
+              <div class="ni on" onclick="goTo('mapa')"><div class="ni-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="var(--green)"/><circle cx="12" cy="9" r="2.5" fill="white"/></svg></div>Mapa</div>
+              <div class="ni" onclick="goTo('perfil')"><div class="ni-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/></svg></div>Historial</div>
+              <div class="ni" onclick="goTo('perfil')"><div class="ni-dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>Perfil</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 3: QR / CÓDIGO -->
+        <div class="screen-inner" id="s-qr">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row">
+              <button class="back-btn" onclick="goTo('mapa')">←</button>
+              <div class="title">Conectar dispositivo</div>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <div id="tab-qr" onclick="switchTab('qr')" style="flex:1;background:var(--green);border-radius:10px;padding:8px;text-align:center;cursor:pointer;"><span style="font-size:10px;font-weight:500;color:white;">Escanear QR</span></div>
+              <div id="tab-codigo" onclick="switchTab('codigo')" style="flex:1;background:#f7f9f8;border-radius:10px;padding:8px;text-align:center;cursor:pointer;"><span style="font-size:10px;color:var(--text-2);">Código manual</span></div>
+              <div id="tab-mapa" onclick="switchTab('mapa-tab')" style="flex:1;background:#f7f9f8;border-radius:10px;padding:8px;text-align:center;cursor:pointer;"><span style="font-size:10px;color:var(--text-2);">Desde mapa</span></div>
+            </div>
+            <div id="tab-content-qr" style="display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;">
+              <div style="font-size:11px;color:var(--text-3);text-align:center;">Apunta la cámara al código QR del dispositivo</div>
+              <div class="qr-frame">
+                <div class="qr-corner qr-corner-tl"></div>
+                <div class="qr-corner qr-corner-tr"></div>
+                <div class="qr-corner qr-corner-bl"></div>
+                <div class="qr-corner qr-corner-br"></div>
+                <div class="qr-grid">
+                  <div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div>
+                  <div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div>
+                  <div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div>
+                  <div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div>
+                  <div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div>
+                  <div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:var(--green);"></div><div class="qr-cell" style="background:#f7f9f8;"></div>
+                </div>
+              </div>
+              <div style="font-size:10px;color:var(--text-3);">o ingresa el código manualmente</div>
+              <input class="inp" style="text-align:center;letter-spacing:4px;font-family:'DM Mono',monospace;font-size:16px;" placeholder="PE - XXXX" value="PE - 4821" />
+              <div class="card-green" style="width:100%;">
+                <div class="row-between">
+                  <div>
+                    <div style="font-size:12px;font-weight:600;color:var(--text);">Dispositivo encontrado</div>
+                    <div style="font-size:10px;color:var(--green-dark);margin-top:2px;">Farmacia Salcobrand · Av. Los Leones 2356</div>
+                  </div>
+                  <div class="pill pill-green">Libre</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="width:100%;margin-top:auto;" onclick="goTo('tipo-carga')">Seleccionar este punto</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 4: TIPO DE CARGA -->
+        <div class="screen-inner" id="s-tipo-carga">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row">
+              <button class="back-btn" onclick="goTo('qr')">←</button>
+              <div class="title">Tipo de carga</div>
+            </div>
+            <div class="card-green">
+              <div style="font-size:12px;font-weight:600;color:#085041;">PE-4821 · Farmacia Salcobrand</div>
+              <div style="font-size:10px;color:var(--green-dark);margin-top:2px;">Av. Los Leones 2356 · Disponible ahora</div>
+            </div>
+            <div class="tipo-option selected" id="opt-bloques" onclick="selectTipo('bloques')">
+              <div class="row-between" style="margin-bottom:6px;">
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Prepago por bloques</div>
+                <div class="pill pill-green" id="badge-bloques">Seleccionado</div>
+              </div>
+              <div style="font-size:11px;color:var(--text-2);margin-bottom:8px;">Elige los minutos exactos (bloques de 10 min). Pagas solo lo que usas.</div>
+              <div class="label">Selecciona tiempo</div>
+              <div class="bloques" id="bloques-list">
+                <div class="bloque on" onclick="selectBloque(10,event)">10 min</div>
+                <div class="bloque" onclick="selectBloque(20,event)">20 min</div>
+                <div class="bloque" onclick="selectBloque(30,event)">30 min</div>
+                <div class="bloque" onclick="selectBloque(40,event)">40 min</div>
+                <div class="bloque" onclick="selectBloque(60,event)">60 min</div>
+              </div>
+            </div>
+            <div class="tipo-option" id="opt-libre" onclick="selectTipo('libre')">
+              <div class="row-between">
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Carga libre</div>
+                <div class="pill pill-gray" id="badge-libre">Disponible</div>
+              </div>
+              <div style="font-size:11px;color:var(--text-2);margin-top:4px;">Monto fijo por los primeros 10 min. Desde el minuto 11, se cobra $35/min exacto según el tiempo que uses. Tú decides cuándo parar.</div>
+            </div>
+            <div class="divider"></div>
+            <div class="row-between">
+              <div>
+                <div class="label">Total a cobrar ahora</div>
+                <div style="font-size:20px;font-weight:600;color:var(--text);" id="precio-total">$350</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="label">Método de pago</div>
+                <div style="font-size:12px;font-weight:500;color:var(--text);">Visa ···4521</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="confirmarPago()">Confirmar y pagar</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 5: CARGA ACTIVA -->
+        <div class="screen-inner" id="s-carga-activa">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="align-items:center;gap:12px;">
+            <div class="row-between" style="width:100%;">
+              <div class="title">Carga en progreso</div>
+              <div class="pill pill-green">Activo</div>
+            </div>
+            <div class="card-green" style="width:100%;">
+              <div style="font-size:12px;font-weight:600;color:#085041;">PE-4821 · Farmacia Salcobrand</div>
+            </div>
+            <div style="position:relative;width:130px;height:130px;">
+              <svg width="130" height="130" viewBox="0 0 130 130">
+                <circle cx="65" cy="65" r="56" fill="none" stroke="var(--green-light)" stroke-width="10"/>
+                <circle cx="65" cy="65" r="56" fill="none" stroke="var(--green)" stroke-width="10" id="progress-ring"
+                  stroke-dasharray="352"
+                  stroke-dashoffset="352"
+                  stroke-linecap="round"
+                  transform="rotate(-90 65 65)"
+                  style="transition:stroke-dashoffset 1s linear;"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <div style="font-size:22px;font-weight:600;color:var(--green-dark);font-family:'DM Mono',monospace;" id="timer-display">10:00</div>
+                <div style="font-size:9px;color:var(--green);" id="timer-label">restantes</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;">
+              <div class="metric">
+                <div class="metric-val" id="costo-actual">$0</div>
+                <div class="metric-lbl">Costo actual</div>
+              </div>
+              <div class="metric">
+                <div class="metric-val" id="kwh-actual">0.0</div>
+                <div class="metric-lbl">kWh entregados</div>
+              </div>
+            </div>
+            <div class="card" style="width:100%;">
+              <div class="row-between">
+                <div>
+                  <div class="label">Modalidad activa</div>
+                  <div style="font-size:13px;font-weight:500;color:var(--text);" id="modalidad-label">Prepago · 10 min</div>
+                </div>
+                <div>
+                  <div class="label">Tarifa</div>
+                  <div style="font-size:13px;font-weight:500;color:var(--text);">$35/min</div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;width:100%;margin-top:auto;">
+              <button class="btn btn-secondary" style="flex:1;" onclick="extender10()">+10 min</button>
+              <button class="btn btn-danger" style="flex:2;" onclick="goTo('feedback')">Detener carga</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN 6: FEEDBACK -->
+        <div class="screen-inner" id="s-feedback">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="align-items:center;gap:12px;">
+            <div style="text-align:center;padding-top:8px;">
+              <div style="width:54px;height:54px;border-radius:50%;background:var(--green-light);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="title">Carga completada</div>
+              <div class="label" style="margin-top:4px;">Gracias por usar PachElectric</div>
+            </div>
+            <div style="background:#f7f9f8;border-radius:14px;padding:14px;width:100%;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text-3);">Duración</div><div style="font-size:16px;font-weight:600;color:var(--text);">10 min</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text-3);">Total cobrado</div><div style="font-size:16px;font-weight:600;color:var(--text);">$350</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text-3);">kWh cargados</div><div style="font-size:16px;font-weight:600;color:var(--text);">2.3</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text-3);">Punto</div><div style="font-size:12px;font-weight:500;color:var(--text);">Salcobrand</div></div>
+              </div>
+            </div>
+            <div style="width:100%;text-align:center;">
+              <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;">¿Cómo fue tu experiencia?</div>
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;">Tu opinión ayuda a mejorar el servicio</div>
+              <div class="stars" id="stars">
+                <span class="star" onclick="rateStar(1)">★</span>
+                <span class="star" onclick="rateStar(2)">★</span>
+                <span class="star" onclick="rateStar(3)">★</span>
+                <span class="star" onclick="rateStar(4)">★</span>
+                <span class="star" onclick="rateStar(5)">★</span>
+              </div>
+            </div>
+            <textarea class="inp" style="resize:none;height:60px;" placeholder="Cuéntanos algo (opcional)..."></textarea>
+            <button class="btn btn-primary" style="width:100%;margin-top:auto;" onclick="goTo('mapa')">Enviar y volver al mapa</button>
+            <div style="font-size:11px;color:var(--text-3);text-align:center;cursor:pointer;" onclick="goTo('mapa')">Omitir</div>
+          </div>
+        </div>
+
+        <!-- SCREEN 7: PERFIL -->
+        <div class="screen-inner" id="s-perfil">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="title">Mi perfil</div>
+            <div class="row" style="gap:12px;">
+              <div style="width:48px;height:48px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:white;flex-shrink:0;">G</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:var(--text);">Gabriel Morales</div>
+                <div style="font-size:11px;color:var(--text-2);">Tesla Model 3 · Visa ···4521</div>
+              </div>
+            </div>
+            <div class="metric-grid">
+              <div class="metric"><div class="metric-val">24</div><div class="metric-lbl">Cargas</div></div>
+              <div class="metric"><div class="metric-val">48h</div><div class="metric-lbl">Tiempo total</div></div>
+              <div class="metric"><div class="metric-val">$8.4k</div><div class="metric-lbl">Gastado</div></div>
+            </div>
+            <div class="section-title">Historial reciente</div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
+              <div class="card row" style="gap:10px;">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="var(--green)"/></svg></div>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Farmacia Salcobrand</div>
+                  <div style="font-size:10px;color:var(--text-3);">Hoy · 10 min · $350</div>
+                </div>
+                <div class="pill pill-green">OK</div>
+              </div>
+              <div class="card row" style="gap:10px;">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="var(--green)"/></svg></div>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Casa particular · J. Pérez</div>
+                  <div style="font-size:10px;color:var(--text-3);">Ayer · 35 min · $1.225</div>
+                </div>
+                <div class="pill pill-green">OK</div>
+              </div>
+              <div class="card row" style="gap:10px;">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--amber-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="var(--amber)"/></svg></div>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Mall Costanera Center</div>
+                  <div style="font-size:10px;color:var(--text-3);">Lunes · 20 min · $700</div>
+                </div>
+                <div class="pill pill-amber">Evaluado</div>
+              </div>
+            </div>
+            <div class="nav-bar">
+              <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Inicio</div>
+              <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Mapa</div>
+              <div class="ni" onclick="goTo('perfil')"><div class="ni-dot"></div>Historial</div>
+              <div class="ni on" onclick="goTo('perfil')"><div class="ni-dot on"></div>Perfil</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /screen -->
+    </div><!-- /device -->
+  </div><!-- /phone-wrap -->
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+      <div style="width:30px;height:30px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="white"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);">PachElectric</div>
+        <div style="font-size:10px;color:var(--text-3);">Prototipo navegable</div>
+      </div>
+    </div>
+    <h3>Flujo del usuario</h3>
+    <div id="flow-steps">
+      <div class="flow-step active-step" onclick="goTo('onboarding')">
+        <div class="step-num">1</div>
+        <div class="step-info"><div class="step-name">Registro</div><div class="step-desc">Conductor o proveedor</div></div>
+      </div>
+      <div class="flow-step" onclick="goTo('mapa')">
+        <div class="step-num">2</div>
+        <div class="step-info"><div class="step-name">Mapa</div><div class="step-desc">Ver enchufes cercanos</div></div>
+      </div>
+      <div class="flow-step" onclick="goTo('qr')">
+        <div class="step-num">3</div>
+        <div class="step-info"><div class="step-name">Conectar</div><div class="step-desc">QR, código o mapa</div></div>
+      </div>
+      <div class="flow-step" onclick="goTo('tipo-carga')">
+        <div class="step-num">4</div>
+        <div class="step-info"><div class="step-name">Tipo de carga</div><div class="step-desc">Bloques o libre</div></div>
+      </div>
+      <div class="flow-step" onclick="goTo('carga-activa')">
+        <div class="step-num">5</div>
+        <div class="step-info"><div class="step-name">Carga activa</div><div class="step-desc">Temporizador en vivo</div></div>
+      </div>
+      <div class="flow-step" onclick="goTo('feedback')">
+        <div class="step-num">6</div>
+        <div class="step-info"><div class="step-name">Evaluación</div><div class="step-desc">Resumen y feedback</div></div>
+      </div>
+      <div class="flow-step" onclick="goTo('perfil')">
+        <div class="step-num">7</div>
+        <div class="step-info"><div class="step-name">Perfil</div><div class="step-desc">Historial de cargas</div></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:12px;background:var(--green-light);border-radius:10px;">
+      <div style="font-size:11px;font-weight:600;color:var(--green-dark);margin-bottom:4px;">Tip de uso</div>
+      <div style="font-size:10px;color:var(--green-dark);line-height:1.5;">Haz click en los pins del mapa y en los pasos del flujo para navegar entre pantallas.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const screens = ['onboarding','mapa','qr','tipo-carga','carga-activa','feedback','perfil'];
+  const stepMap = { onboarding:0, mapa:1, qr:2, 'tipo-carga':3, 'carga-activa':4, feedback:5, perfil:6 };
+  let currentScreen = 'onboarding';
+  let timerInterval = null;
+  let timerSecs = 600;
+  let totalSecs = 600;
+  let selectedTipo = 'bloques';
+  let selectedBloques = 10;
+  let precios = { 10:350, 20:700, 30:1050, 40:1400, 60:2100 };
+
+  function goTo(s) {
+    document.querySelectorAll('.screen-inner').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('s-' + s);
+    if (el) { el.classList.add('active'); currentScreen = s; }
+    updateSidebarSteps();
+    updateMobileNav(s);
+    if (s === 'carga-activa') startTimer();
+    else stopTimer();
+    if (s === 'mapa') document.getElementById('map-popup').classList.remove('visible');
+  }
+
+  function updateMobileNav(s) {
+    const map = { onboarding:'mn-onboarding', mapa:'mn-mapa', qr:'mn-qr', 'tipo-carga':'mn-tipo-carga', 'carga-activa':'mn-carga-activa', feedback:'mn-carga-activa', perfil:'mn-perfil' };
+    document.querySelectorAll('.mnb').forEach(el => el.classList.remove('on'));
+    const target = document.getElementById(map[s]);
+    if (target) target.classList.add('on');
+  }
+
+  function updateSidebarSteps() {
+    const idx = stepMap[currentScreen] ?? -1;
+    document.querySelectorAll('.flow-step').forEach((el, i) => {
+      el.classList.toggle('active-step', i === idx);
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function selectRol(rol) {
+    const c = document.getElementById('rol-conductor');
+    const p = document.getElementById('rol-proveedor');
+    if (rol === 'conductor') {
+      c.style.background = 'var(--green)'; c.style.borderColor = 'var(--green)';
+      c.querySelector('div:last-child').style.color = 'white';
+      c.querySelectorAll('div')[1].style.color = '#9FE1CB';
+      p.style.background = '#f7f9f8'; p.style.borderColor = 'transparent';
+    } else {
+      p.style.background = 'var(--green-light)'; p.style.borderColor = 'var(--green)';
+      c.style.background = '#f7f9f8'; c.style.borderColor = 'transparent';
+    }
+  }
+
+  function showMapPopup(name, dist, precio, status) {
+    document.getElementById('popup-name').textContent = name;
+    document.getElementById('popup-dist').textContent = dist + ' · ' + precio;
+    const pb = document.getElementById('popup-status');
+    pb.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    pb.className = 'pill ' + (status === 'libre' ? 'pill-green' : status === 'ocupado' ? 'pill-amber' : 'pill-gray');
+    document.getElementById('map-popup').classList.add('visible');
+  }
+
+  function switchTab(tab) {
+    ['qr','codigo','mapa-tab'].forEach(t => {
+      const el = document.getElementById('tab-' + t);
+      if (el) { el.style.background = '#f7f9f8'; el.querySelector('span').style.color = 'var(--text-2)'; }
+    });
+    const active = document.getElementById('tab-' + tab);
+    if (active) { active.style.background = 'var(--green)'; active.querySelector('span').style.color = 'white'; }
+  }
+
+  function selectTipo(tipo) {
+    selectedTipo = tipo;
+    const ob = document.getElementById('opt-bloques');
+    const ol = document.getElementById('opt-libre');
+    const bb = document.getElementById('badge-bloques');
+    const bl = document.getElementById('badge-libre');
+    if (tipo === 'bloques') {
+      ob.classList.add('selected'); ol.classList.remove('selected');
+      bb.textContent = 'Seleccionado'; bb.className = 'pill pill-green';
+      bl.textContent = 'Disponible'; bl.className = 'pill pill-gray';
+      updatePrecio();
+    } else {
+      ol.classList.add('selected'); ob.classList.remove('selected');
+      bl.textContent = 'Seleccionado'; bl.className = 'pill pill-green';
+      bb.textContent = 'Disponible'; bb.className = 'pill pill-gray';
+      document.getElementById('precio-total').textContent = '$350';
+      document.getElementById('modalidad-label').textContent = 'Libre · $350 fijo + $35/min desde min 11';
+    }
+  }
+
+  function selectBloque(min, e) {
+    selectedBloques = min;
+    document.querySelectorAll('.bloque').forEach(el => el.classList.remove('on'));
+    e.target.classList.add('on');
+    updatePrecio();
+  }
+
+  function updatePrecio() {
+    document.getElementById('precio-total').textContent = '$' + (precios[selectedBloques] || 350).toLocaleString('es-CL');
+    document.getElementById('modalidad-label').textContent = 'Prepago · ' + selectedBloques + ' min';
+    totalSecs = selectedBloques * 60;
+    timerSecs = totalSecs;
+  }
+
+  function confirmarPago() {
+    showToast('Pago procesado. Dispositivo activado');
+    setTimeout(() => goTo('carga-activa'), 800);
+  }
+
+  function startTimer() {
+    stopTimer();
+    timerSecs = selectedTipo === 'bloques' ? selectedBloques * 60 : 600;
+    totalSecs = timerSecs;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      if (timerSecs > 0) {
+        timerSecs--;
+        updateTimerDisplay();
+      } else {
+        stopTimer();
+        showToast('Tiempo completado. Carga detenida.');
+        setTimeout(() => goTo('feedback'), 1000);
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timerSecs / 60);
+    const s = timerSecs % 60;
+    document.getElementById('timer-display').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    const elapsed = totalSecs - timerSecs;
+    const elapsedMin = elapsed / 60;
+    const costo = selectedTipo === 'libre'
+      ? Math.round(350 + Math.max(0, elapsedMin - 10) * 35)
+      : Math.round(elapsedMin * 35);
+    document.getElementById('costo-actual').textContent = '$' + costo.toLocaleString('es-CL');
+    document.getElementById('kwh-actual').textContent = (elapsedMin * 0.23).toFixed(1);
+    const ring = document.getElementById('progress-ring');
+    const progress = elapsed / totalSecs;
+    const circ = 352;
+    ring.style.strokeDashoffset = Math.round(circ * (1 - progress));
+  }
+
+  function extender10() {
+    timerSecs += 600;
+    totalSecs += 600;
+    showToast('+10 min agregados');
+  }
+
+  function rateStar(n) {
+    document.querySelectorAll('.star').forEach((el, i) => {
+      el.classList.toggle('lit', i < n);
+    });
+  }
+
+  updateSidebarSteps();
+
+  // iOS Safari fix: onclick en divs no dispara sin cursor:pointer
+  // Agregamos touchend para todos los elementos interactivos no-button
+  document.querySelectorAll('[onclick]').forEach(el => {
+    el.style.cursor = 'pointer';
+    el.style.webkitTapHighlightColor = 'transparent';
+    if (el.tagName !== 'BUTTON') {
+      const fn = el.getAttribute('onclick');
+      el.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        try { eval(fn); } catch(err) {}
+      }, { passive: false });
+    }
+  });
+
+  // Fix height iOS: reemplaza dvh con window.innerHeight real
+  function fixIOSHeight() {
+    if (window.innerWidth <= 600) {
+      const vh = window.innerHeight;
+      document.querySelectorAll('.screen, .stage').forEach(el => {
+        el.style.height = vh + 'px';
+      });
+    }
+  }
+  fixIOSHeight();
+  window.addEventListener('resize', fixIOSHeight);
+  window.addEventListener('orientationchange', () => setTimeout(fixIOSHeight, 300));
+</script>
+
+<!-- Mobile floating nav -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mnb on" id="mn-onboarding" onclick="goTo('onboarding')">Registro</button>
+  <button class="mnb" id="mn-mapa" onclick="goTo('mapa')">Mapa</button>
+  <button class="mnb" id="mn-qr" onclick="goTo('qr')">QR</button>
+  <button class="mnb" id="mn-tipo-carga" onclick="goTo('tipo-carga')">Carga</button>
+  <button class="mnb" id="mn-carga-activa" onclick="goTo('carga-activa')">Activa</button>
+  <button class="mnb" id="mn-perfil" onclick="goTo('perfil')">Perfil</button>
+</div>
+
+</body>
+</html>
