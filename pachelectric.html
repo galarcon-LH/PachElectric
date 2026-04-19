@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>PachElectric — Prototipo</title>
+<title>Pluggi — Prototipo</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green: #1D9E75;
-    --green-dark: #0F6E56;
-    --green-light: #E1F5EE;
-    --green-mid: #5DCAA5;
+    --green: #29ABE2;
+    --green-dark: #1A7BB9;
+    --green-light: #E6F4FC;
+    --green-mid: #7CC8EC;
     --amber: #BA7517;
     --amber-light: #FAEEDA;
     --red: #E24B4A;
@@ -128,6 +128,7 @@
   .screen-inner.active { display: flex; }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
   .sb {
     height: 32px;
@@ -497,11 +498,18 @@
           <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
           <div class="sc" style="gap:12px;">
             <div style="text-align:center;padding:6px 0;">
-              <div style="width:54px;height:54px;border-radius:18px;background:var(--green);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="white"/></svg>
+              <div style="margin:0 auto 6px;">
+                <svg width="140" height="44" viewBox="0 0 140 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <text x="4" y="34" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="800" font-size="32" fill="#29ABE2">Pluggi</text>
+                  <g transform="translate(108,4)">
+                    <rect x="2" y="10" width="20" height="14" rx="4" fill="#29ABE2"/>
+                    <line x1="8" y1="10" x2="8" y2="4" stroke="#29ABE2" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="16" y1="10" x2="16" y2="4" stroke="#29ABE2" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M12 24 Q12 30 6 32" stroke="#29ABE2" stroke-width="3" stroke-linecap="round" fill="none"/>
+                  </g>
+                </svg>
               </div>
-              <div style="font-size:20px;font-weight:600;color:var(--text);">PachElectric</div>
-              <div style="font-size:11px;color:var(--text-3);margin-top:3px;">Carga tu vehículo donde quieras</div>
+              <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carga tu vehículo donde quieras</div>
             </div>
             <div style="display:flex;gap:8px;">
               <div id="rol-conductor" onclick="selectRol('conductor')" style="flex:1;background:var(--green);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;border:2px solid var(--green);">
@@ -562,7 +570,7 @@
                 </div>
                 <div style="display:flex;gap:6px;">
                   <button class="btn btn-secondary" style="flex:1;padding:8px;font-size:11px;" onclick="goTo('qr')">Conectar</button>
-                  <button class="btn btn-primary" style="flex:2;padding:8px;font-size:11px;" onclick="goTo('qr')">Reservar y navegar</button>
+                  <button class="btn btn-primary" style="flex:2;padding:8px;font-size:11px;" onclick="goTo('gps')">Navegar al punto</button>
                 </div>
               </div>
             </div>
@@ -605,7 +613,7 @@
                 </div>
               </div>
               <div style="font-size:10px;color:var(--text-3);">o ingresa el código manualmente</div>
-              <input class="inp" style="text-align:center;letter-spacing:4px;font-family:'DM Mono',monospace;font-size:16px;" placeholder="PE - XXXX" value="PE - 4821" />
+              <input class="inp" style="text-align:center;letter-spacing:4px;font-family:'DM Mono',monospace;font-size:16px;" placeholder="PL - XXXX" value="PL - 4821" />
               <div class="card-green" style="width:100%;">
                 <div class="row-between">
                   <div>
@@ -629,7 +637,7 @@
               <div class="title">Tipo de carga</div>
             </div>
             <div class="card-green">
-              <div style="font-size:12px;font-weight:600;color:#085041;">PE-4821 · Farmacia Salcobrand</div>
+              <div style="font-size:12px;font-weight:600;color:#085041;">PL-4821 · Farmacia Salcobrand</div>
               <div style="font-size:10px;color:var(--green-dark);margin-top:2px;">Av. Los Leones 2356 · Disponible ahora</div>
             </div>
             <div class="tipo-option selected" id="opt-bloques" onclick="selectTipo('bloques')">
@@ -637,14 +645,13 @@
                 <div style="font-size:13px;font-weight:600;color:var(--text);">Prepago por bloques</div>
                 <div class="pill pill-green" id="badge-bloques">Seleccionado</div>
               </div>
-              <div style="font-size:11px;color:var(--text-2);margin-bottom:8px;">Elige los minutos exactos (bloques de 10 min). Pagas solo lo que usas.</div>
+              <div style="font-size:11px;color:var(--text-2);margin-bottom:8px;">Elige el tiempo en bloques de 30 min. Pagas antes de iniciar.</div>
               <div class="label">Selecciona tiempo</div>
               <div class="bloques" id="bloques-list">
-                <div class="bloque on" onclick="selectBloque(10,event)">10 min</div>
-                <div class="bloque" onclick="selectBloque(20,event)">20 min</div>
-                <div class="bloque" onclick="selectBloque(30,event)">30 min</div>
-                <div class="bloque" onclick="selectBloque(40,event)">40 min</div>
+                <div class="bloque on" onclick="selectBloque(30,event)">30 min</div>
                 <div class="bloque" onclick="selectBloque(60,event)">60 min</div>
+                <div class="bloque" onclick="selectBloque(90,event)">90 min</div>
+                <div class="bloque" onclick="selectBloque(120,event)">120 min</div>
               </div>
             </div>
             <div class="tipo-option" id="opt-libre" onclick="selectTipo('libre')">
@@ -652,7 +659,14 @@
                 <div style="font-size:13px;font-weight:600;color:var(--text);">Carga libre</div>
                 <div class="pill pill-gray" id="badge-libre">Disponible</div>
               </div>
-              <div style="font-size:11px;color:var(--text-2);margin-top:4px;">Monto fijo por los primeros 10 min. Desde el minuto 11, se cobra $35/min exacto según el tiempo que uses. Tú decides cuándo parar.</div>
+              <div style="font-size:11px;color:var(--text-2);margin-top:4px;">Monto fijo primeros 10 min. Desde el min 11, se cobra $35/min exacto. Tú decides cuándo parar.</div>
+            </div>
+            <div class="tipo-option" id="opt-estacionamiento" onclick="selectTipo('estacionamiento')">
+              <div class="row-between">
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Solo estacionamiento</div>
+                <div class="pill pill-gray" id="badge-estacionamiento">Disponible</div>
+              </div>
+              <div style="font-size:11px;color:var(--text-2);margin-top:4px;">Sin carga eléctrica. Monto fijo primeros 10 min, luego $30/min exacto. Ideal para estacionar brevemente.</div>
             </div>
             <div class="divider"></div>
             <div class="row-between">
@@ -665,7 +679,7 @@
                 <div style="font-size:12px;font-weight:500;color:var(--text);">Visa ···4521</div>
               </div>
             </div>
-            <button class="btn btn-primary" onclick="confirmarPago()">Confirmar y pagar</button>
+            <button class="btn btn-primary" onclick="goTo('confirmacion')">Ver resumen del servicio</button>
           </div>
         </div>
 
@@ -678,7 +692,7 @@
               <div class="pill pill-green">Activo</div>
             </div>
             <div class="card-green" style="width:100%;">
-              <div style="font-size:12px;font-weight:600;color:#085041;">PE-4821 · Farmacia Salcobrand</div>
+              <div style="font-size:12px;font-weight:600;color:#085041;">PL-4821 · Farmacia Salcobrand</div>
             </div>
             <div style="position:relative;width:130px;height:130px;">
               <svg width="130" height="130" viewBox="0 0 130 130">
@@ -721,6 +735,7 @@
               <button class="btn btn-secondary" style="flex:1;" onclick="extender10()">+10 min</button>
               <button class="btn btn-danger" style="flex:2;" onclick="goTo('feedback')">Detener carga</button>
             </div>
+            <button class="btn btn-secondary" style="width:100%;font-size:11px;padding:8px;" onclick="setPrevScreen('carga-activa');goTo('opciones-soporte')">Ayuda con este servicio</button>
           </div>
         </div>
 
@@ -733,7 +748,7 @@
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <div class="title">Carga completada</div>
-              <div class="label" style="margin-top:4px;">Gracias por usar PachElectric</div>
+              <div class="label" style="margin-top:4px;">Gracias por usar Pluggi</div>
             </div>
             <div style="background:#f7f9f8;border-radius:14px;padding:14px;width:100%;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
@@ -764,13 +779,17 @@
         <div class="screen-inner" id="s-perfil">
           <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
           <div class="sc">
-            <div class="title">Mi perfil</div>
+            <div class="title">Perfil usuario conductor</div>
             <div class="row" style="gap:12px;">
               <div style="width:48px;height:48px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:white;flex-shrink:0;">G</div>
               <div>
                 <div style="font-size:14px;font-weight:600;color:var(--text);">Gabriel Morales</div>
                 <div style="font-size:11px;color:var(--text-2);">Tesla Model 3 · Visa ···4521</div>
               </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button class="btn btn-secondary" style="font-size:11px;padding:10px 8px;" onclick="goTo('soporte-conductor')">Contactar soporte</button>
+              <button class="btn btn-secondary" style="font-size:11px;padding:10px 8px;" onclick="goTo('billetera')">Billetera</button>
             </div>
             <div class="metric-grid">
               <div class="metric"><div class="metric-val">24</div><div class="metric-lbl">Cargas</div></div>
@@ -780,7 +799,7 @@
             <div class="section-title">Historial reciente</div>
             <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
               <div class="card row" style="gap:10px;">
-                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="var(--green)"/></svg></div>
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
                 <div style="flex:1;">
                   <div style="font-size:12px;font-weight:500;color:var(--text);">Farmacia Salcobrand</div>
                   <div style="font-size:10px;color:var(--text-3);">Hoy · 10 min · $350</div>
@@ -788,7 +807,7 @@
                 <div class="pill pill-green">OK</div>
               </div>
               <div class="card row" style="gap:10px;">
-                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="var(--green)"/></svg></div>
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
                 <div style="flex:1;">
                   <div style="font-size:12px;font-weight:500;color:var(--text);">Casa particular · J. Pérez</div>
                   <div style="font-size:10px;color:var(--text-3);">Ayer · 35 min · $1.225</div>
@@ -796,7 +815,7 @@
                 <div class="pill pill-green">OK</div>
               </div>
               <div class="card row" style="gap:10px;">
-                <div style="width:32px;height:32px;border-radius:10px;background:var(--amber-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="var(--amber)"/></svg></div>
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--amber-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--amber)" stroke-width="2"/><path d="M9 11V7" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/></svg></div>
                 <div style="flex:1;">
                   <div style="font-size:12px;font-weight:500;color:var(--text);">Mall Costanera Center</div>
                   <div style="font-size:10px;color:var(--text-3);">Lunes · 20 min · $700</div>
@@ -808,11 +827,530 @@
               <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Inicio</div>
               <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Mapa</div>
               <div class="ni" onclick="goTo('perfil')"><div class="ni-dot"></div>Historial</div>
-              <div class="ni on" onclick="goTo('perfil')"><div class="ni-dot on"></div>Perfil</div>
+              <div class="ni on" onclick="goTo('perfil')"><div class="ni-dot on"></div>Conductor</div>
             </div>
           </div>
         </div>
 
+
+        <!-- SCREEN GPS: NAVEGACIÓN -->
+        <div class="screen-inner" id="s-gps">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="padding:0;gap:0;position:relative;">
+            <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:#d8ead8;overflow:hidden;">
+              <div style="position:absolute;height:8px;left:0;right:0;background:#eaf2ea;top:30%;"></div>
+              <div style="position:absolute;height:8px;left:0;right:0;background:#eaf2ea;top:55%;"></div>
+              <div style="position:absolute;height:8px;left:0;right:0;background:#eaf2ea;top:75%;"></div>
+              <div style="position:absolute;width:8px;top:0;bottom:0;background:#eaf2ea;left:25%;"></div>
+              <div style="position:absolute;width:8px;top:0;bottom:0;background:#eaf2ea;left:60%;"></div>
+              <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 292 560" fill="none">
+                <path d="M146 480 L146 300 Q146 260 180 220 Q214 180 214 120 Q214 80 190 60" stroke="#29ABE2" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 6" opacity="0.9"/>
+                <circle cx="190" cy="55" r="12" fill="#29ABE2"/>
+                <circle cx="190" cy="55" r="7" fill="white"/>
+                <text x="205" y="42" font-family="Arial" font-size="10" fill="#1A7BB9" font-weight="bold">Farmacia</text>
+                <text x="205" y="54" font-family="Arial" font-size="10" fill="#1A7BB9">Salcobrand</text>
+                <circle cx="146" cy="485" r="10" fill="#185FA5"/>
+                <circle cx="146" cy="485" r="5" fill="white"/>
+              </svg>
+            </div>
+            <div style="position:absolute;top:10px;left:10px;right:10px;background:white;border-radius:14px;padding:10px 14px;border:0.5px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button class="back-btn" onclick="goTo('mapa')" style="flex-shrink:0;">←</button>
+                <div style="flex:1;">
+                  <div style="font-size:11px;color:var(--text-3);">Navegando a</div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text);">Farmacia Salcobrand</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:16px;font-weight:700;color:var(--green);">3 min</div>
+                  <div style="font-size:9px;color:var(--text-3);">220 m</div>
+                </div>
+              </div>
+            </div>
+            <div style="position:absolute;bottom:0;left:0;right:0;background:white;border-radius:20px 20px 0 0;padding:14px 18px 24px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div>
+                  <div style="font-size:11px;color:var(--text-3);">Próxima indicación</div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text);">Gira a la derecha en Av. Los Leones</div>
+                </div>
+                <div style="width:36px;height:36px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <div style="flex:1;background:#f7f9f8;border-radius:10px;padding:8px;text-align:center;">
+                  <div style="font-size:9px;color:var(--text-3);">Distancia</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--text);">220 m</div>
+                </div>
+                <div style="flex:1;background:#f7f9f8;border-radius:10px;padding:8px;text-align:center;">
+                  <div style="font-size:9px;color:var(--text-3);">Tiempo</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--text);">3 min</div>
+                </div>
+                <div style="flex:1;background:#f7f9f8;border-radius:10px;padding:8px;text-align:center;">
+                  <div style="font-size:9px;color:var(--text-3);">Tarifa</div>
+                  <div style="font-size:14px;font-weight:600;color:var(--green);">$35/min</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="width:100%;margin-top:10px;" onclick="goTo('qr')">He llegado — Conectar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN CONFIRMACION ───────────────── -->
+        <div class="screen-inner" id="s-confirmacion">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="gap:10px;">
+            <div class="row">
+              <button class="back-btn" onclick="goTo('tipo-carga')">←</button>
+              <div class="title">Confirmación de servicio</div>
+            </div>
+            <div class="card-green">
+              <div style="font-size:12px;font-weight:600;color:#085041;">PL-4821 · Farmacia Salcobrand</div>
+              <div style="font-size:10px;color:var(--green-dark);margin-top:2px;">Av. Los Leones 2356</div>
+            </div>
+            <div style="background:#f7f9f8;border-radius:14px;padding:12px 14px;">
+              <div style="font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Resumen del servicio</div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);">
+                <span style="font-size:12px;color:var(--text-2);">Modalidad</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text);" id="conf-modalidad">Prepago · 30 min</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);">
+                <span style="font-size:12px;color:var(--text-2);">Duración</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text);" id="conf-duracion">30 minutos</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);">
+                <span style="font-size:12px;color:var(--text-2);">Tarifa</span>
+                <span style="font-size:12px;font-weight:500;color:var(--text);" id="conf-tarifa">$35/min</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:8px 0 0;">
+                <span style="font-size:13px;font-weight:600;color:var(--text);">Total a cobrar</span>
+                <span style="font-size:16px;font-weight:700;color:var(--green);" id="conf-total">$1.050</span>
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:8px;">Método de pago</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:32px;height:22px;background:#1A7BB9;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+                  <span style="font-size:8px;color:white;font-weight:700;">VISA</span>
+                </div>
+                <div>
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Visa terminada en 4521</div>
+                  <div style="font-size:10px;color:var(--text-3);">Débito</div>
+                </div>
+                <div style="margin-left:auto;"><div class="pill pill-green">Activa</div></div>
+              </div>
+            </div>
+            <div style="background:var(--green-light);border-radius:12px;padding:10px 14px;">
+              <div style="font-size:10px;color:var(--green-dark);line-height:1.5;">Al confirmar, se realizará el cobro inmediato y el dispositivo se activará automáticamente.</div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:auto;" onclick="confirmarPago()">Confirmar y pagar</button>
+            <button class="btn btn-secondary" onclick="goTo('tipo-carga')" style="padding:8px;">Cambiar tipo de carga</button>
+          </div>
+        </div>
+
+        <!-- SCREEN CONECTAR VEHICULO ─────────── -->
+        <div class="screen-inner" id="s-conectar">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="align-items:center;gap:14px;">
+            <div style="font-size:17px;font-weight:600;color:var(--text);width:100%;">Conecta tu vehículo</div>
+            <div class="card-green" style="width:100%;">
+              <div style="font-size:12px;font-weight:600;color:#085041;">PL-4821 · Farmacia Salcobrand</div>
+              <div style="font-size:10px;color:var(--green-dark);margin-top:2px;">Pago confirmado — dispositivo listo</div>
+            </div>
+            <div style="text-align:center;padding:16px 0;">
+              <div style="width:90px;height:90px;border-radius:50%;background:var(--green-light);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;border:3px solid var(--green);">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="1.8"/><path d="M9 11V7" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </div>
+              <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;">Enchufa tu cable al dispositivo</div>
+              <div style="font-size:11px;color:var(--text-2);line-height:1.6;max-width:220px;margin:0 auto;">Conecta el cable de carga de tu vehículo al dispositivo PL-4821. La luz indicadora parpadeará en azul cuando esté listo.</div>
+            </div>
+            <div style="display:flex;gap:8px;width:100%;">
+              <div style="flex:1;background:#f7f9f8;border-radius:10px;padding:10px;text-align:center;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#EF9F27;margin:0 auto 4px;"></div>
+                <div style="font-size:9px;color:var(--text-2);">Esperando</div>
+              </div>
+              <div style="flex:1;background:#f7f9f8;border-radius:10px;padding:10px;text-align:center;">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--green);margin:0 auto 4px;"></div>
+                <div style="font-size:9px;color:var(--text-2);">Conectado</div>
+              </div>
+              <div style="flex:1;background:#f7f9f8;border-radius:10px;padding:10px;text-align:center;">
+                <div style="width:10px;height:10px;border-radius:50%;background:#29ABE2;margin:0 auto 4px;animation:blink 1s infinite;"></div>
+                <div style="font-size:9px;color:var(--text-2);">Cargando</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:auto;padding:14px;font-size:14px;" onclick="goTo('carga-activa')">
+              ✓ Vehículo conectado
+            </button>
+            <div style="font-size:10px;color:var(--text-3);text-align:center;">¿Problemas? <span style="color:var(--green);cursor:pointer;">Contactar soporte</span></div>
+          </div>
+        </div>
+
+        <!-- SCREEN PERFIL PROVEEDOR ──────────── -->
+        <div class="screen-inner" id="s-perfil-proveedor">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="title">Perfil usuario proveedor</div>
+            <div class="row" style="gap:12px;">
+              <div style="width:48px;height:48px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:white;flex-shrink:0;">M</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:var(--text);">Miguel Bravo</div>
+                <div style="font-size:11px;color:var(--text-2);">Farmacia Salcobrand — Proveedor</div>
+              </div>
+            </div>
+            <div style="background:#f7f9f8;border-radius:12px;padding:12px 14px;">
+              <div style="font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:6px;">Calificación del proveedor</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="font-size:28px;font-weight:700;color:var(--text);">4.8</div>
+                <div>
+                  <div style="display:flex;gap:2px;">
+                    <span style="font-size:14px;color:#EF9F27;">★</span><span style="font-size:14px;color:#EF9F27;">★</span><span style="font-size:14px;color:#EF9F27;">★</span><span style="font-size:14px;color:#EF9F27;">★</span><span style="font-size:14px;color:#EF9F27;">★</span>
+                  </div>
+                  <div style="font-size:10px;color:var(--text-3);">Basado en 143 evaluaciones</div>
+                </div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+              <div class="metric"><div class="metric-val">86</div><div class="metric-lbl">Servicios</div></div>
+              <div class="metric"><div class="metric-val">142h</div><div class="metric-lbl">Tiempo total</div></div>
+              <div class="metric"><div style="font-size:14px;font-weight:600;color:var(--green);">$124k</div><div class="metric-lbl">Ingreso mes</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+              <button class="btn btn-secondary" style="font-size:10px;padding:8px 6px;" onclick="goTo('soporte-proveedor')">Contactar soporte</button>
+              <button class="btn btn-secondary" style="font-size:10px;padding:8px 6px;" onclick="goTo('ingresos')">Ingresos</button>
+              <button class="btn btn-secondary" style="font-size:10px;padding:8px 6px;" onclick="goTo('solicitar-kit')">Solicitar kit</button>
+              <button class="btn btn-secondary" style="font-size:10px;padding:8px 6px;" onclick="goTo('conectar-kit')">Conectar dispositivo</button>
+            </div>
+            <div style="font-size:10px;font-weight:600;color:var(--text-2);letter-spacing:0.5px;">Servicios prestados este mes</div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
+              <div class="card row" style="gap:10px;">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · Tesla Model 3</div>
+                  <div style="font-size:10px;color:var(--text-3);">Hoy 14:32 · 60 min · Carga libre</div>
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--green);">+$2.100</div>
+              </div>
+              <div class="card row" style="gap:10px;">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · BYD Atto 3</div>
+                  <div style="font-size:10px;color:var(--text-3);">Hoy 11:15 · 30 min · Prepago</div>
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--green);">+$1.050</div>
+              </div>
+              <div class="card row" style="gap:10px;">
+                <div style="width:32px;height:32px;border-radius:10px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="var(--amber)"/><rect x="14" y="3" width="7" height="7" rx="1" fill="var(--amber)"/><rect x="3" y="14" width="7" height="7" rx="1" fill="var(--amber)"/><rect x="14" y="14" width="7" height="7" rx="1" fill="var(--amber)"/></svg></div>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · MG ZS EV</div>
+                  <div style="font-size:10px;color:var(--text-3);">Ayer 18:45 · Solo estacionamiento</div>
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--green);">+$900</div>
+              </div>
+            </div>
+            <div class="nav-bar">
+              <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Mapa</div>
+              <div class="ni" onclick="goTo('perfil')"><div class="ni-dot"></div>Conductor</div>
+              <div class="ni on" onclick="goTo('perfil-proveedor')"><div class="ni-dot on"></div>Proveedor</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOPORTE CONDUCTOR [2] -->
+        <div class="screen-inner" id="s-soporte-conductor">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('perfil')">←</button><div class="title">Contactar soporte</div></div>
+            <button class="btn btn-primary" style="width:100%;" onclick="setPrevScreen('soporte-conductor');goTo('opciones-soporte')">Contactar a soporte</button>
+            <div class="divider"></div>
+            <div class="section-title">Ayuda con carga anterior</div>
+            <div style="font-size:11px;color:var(--text-3);">Selecciona un servicio para reportar un problema</div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
+              <div class="card row" style="gap:10px;cursor:pointer;" onclick="setChatServicio('Farmacia Salcobrand — Hoy · 10 min');goTo('chat-soporte')">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--text);">Farmacia Salcobrand</div><div style="font-size:10px;color:var(--text-3);">Hoy · 10 min · $350</div></div>
+                <div style="font-size:18px;color:var(--text-3);">›</div>
+              </div>
+              <div class="card row" style="gap:10px;cursor:pointer;" onclick="setChatServicio('Casa particular J. Pérez — Ayer · 35 min');goTo('chat-soporte')">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--text);">Casa particular · J. Pérez</div><div style="font-size:10px;color:var(--text-3);">Ayer · 35 min · $1.225</div></div>
+                <div style="font-size:18px;color:var(--text-3);">›</div>
+              </div>
+              <div class="card row" style="gap:10px;cursor:pointer;" onclick="setChatServicio('Mall Costanera — Lunes · 20 min');goTo('chat-soporte')">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--amber-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--amber)" stroke-width="2"/><path d="M9 11V7" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--text);">Mall Costanera Center</div><div style="font-size:10px;color:var(--text-3);">Lunes · 20 min · $700</div></div>
+                <div style="font-size:18px;color:var(--text-3);">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPCIONES SOPORTE [2.1] compartida conductor/carga activa -->
+        <div class="screen-inner" id="s-opciones-soporte">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" id="back-opciones" onclick="goTo(prevScreen||'soporte-conductor')">←</button><div class="title">Opciones soporte</div></div>
+            <div style="font-size:11px;color:var(--text-3);">¿Cuál es el motivo de tu consulta?</div>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Problema con el cobro de mi carga');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Problema con el cobro</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">Cargo incorrecto o doble cobro</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('El dispositivo no se conectó correctamente');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Dispositivo no conectó</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">El enchufe no activó o se cortó</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('La carga fue lenta o no entregó energía');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Carga lenta o sin energía</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">Velocidad o kWh no esperados</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Tuve un problema con el punto de carga o el proveedor');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Problema con el proveedor</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">Acceso, trato o condiciones del lugar</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('La app presentó un error durante mi carga');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Error en la aplicación</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">La app se cerró, congeló o falló</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAT SOPORTE [2.1 y 2.2 unificados] -->
+        <div class="screen-inner" id="s-chat-soporte">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="gap:8px;padding-bottom:8px;">
+            <div class="row"><button class="back-btn" onclick="goTo('opciones-soporte')">←</button><div style="flex:1;"><div class="title" style="font-size:14px;">Soporte Pluggi</div><div style="font-size:9px;color:var(--green);">En línea</div></div><div style="width:32px;height:32px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2z" fill="white"/><path d="M8 12h8M12 8v8" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;overflow:hidden;justify-content:flex-end;">
+              <div style="display:flex;justify-content:flex-end;">
+                <div style="background:var(--green);color:white;border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:80%;font-size:12px;line-height:1.5;" id="chat-primer-msg">Hola, tengo un problema con el cobro de mi carga</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:var(--green);">P</div>
+                <div style="background:#f7f9f8;border-radius:14px 14px 14px 4px;padding:10px 14px;max-width:80%;font-size:12px;line-height:1.5;color:var(--text);">Hola, soy Pluggi Soporte. Recibí tu mensaje y estoy revisando tu caso. ¿Me puedes indicar la fecha y hora aproximada del servicio?</div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;">
+                <div style="background:var(--green);color:white;border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:80%;font-size:12px;line-height:1.5;">Fue hoy alrededor de las 14:30 en Farmacia Salcobrand</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:var(--green);">P</div>
+                <div style="background:#f7f9f8;border-radius:14px 14px 14px 4px;padding:10px 14px;max-width:80%;font-size:12px;line-height:1.5;color:var(--text);">Perfecto, ya encontré tu sesión. Estamos procesando la revisión. Te notificaremos en los próximos 30 minutos. ¿Hay algo más en que pueda ayudarte?</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+              <input class="inp" placeholder="Escribe tu mensaje..." style="flex:1;"/>
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BILLETERA [3] -->
+        <div class="screen-inner" id="s-billetera">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('perfil')">←</button><div class="title">Billetera</div></div>
+            <div class="section-title">Métodos de pago</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="card row" style="gap:12px;">
+                <div style="width:44px;height:30px;background:#1A7BB9;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:10px;color:white;font-weight:700;">VISA</span></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">Visa terminada en 4521</div><div style="font-size:10px;color:var(--text-3);">Vence 09/27 · Débito</div></div>
+                <div class="pill pill-green">Principal</div>
+              </div>
+              <div class="card row" style="gap:12px;">
+                <div style="width:44px;height:30px;background:#1a1a2e;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:9px;color:#FFB600;font-weight:700;">MC</span></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">Mastercard terminada en 8834</div><div style="font-size:10px;color:var(--text-3);">Vence 03/26 · Crédito</div></div>
+                <div class="pill pill-gray">Secundaria</div>
+              </div>
+              <div class="card row" style="gap:12px;">
+                <div style="width:44px;height:30px;background:#00A859;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:9px;color:white;font-weight:700;">MACH</span></div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">MACH · gabrielm</div><div style="font-size:10px;color:var(--text-3);">Saldo: $12.400</div></div>
+                <div class="pill pill-gray">Activa</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:auto;" onclick="goTo('nueva-tarjeta')">+ Agregar nueva tarjeta</button>
+          </div>
+        </div>
+
+        <!-- NUEVA TARJETA [3] -->
+        <div class="screen-inner" id="s-nueva-tarjeta">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('billetera')">←</button><div class="title">Nueva tarjeta</div></div>
+            <div style="background:linear-gradient(135deg,#1A7BB9,#29ABE2);border-radius:16px;padding:20px;color:white;margin-bottom:4px;">
+              <div style="font-size:9px;opacity:0.8;margin-bottom:16px;">TARJETA DE PAGO</div>
+              <div style="font-size:16px;font-weight:600;letter-spacing:3px;margin-bottom:16px;" id="preview-num">•••• •••• •••• ••••</div>
+              <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+                <div><div style="font-size:8px;opacity:0.8;">TITULAR</div><div style="font-size:11px;font-weight:500;" id="preview-name">NOMBRE TITULAR</div></div>
+                <div><div style="font-size:8px;opacity:0.8;">VENCE</div><div style="font-size:11px;" id="preview-exp">MM/AA</div></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div><div class="label" style="margin-bottom:4px;">Número de tarjeta</div><input class="inp" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)" /></div>
+              <div><div class="label" style="margin-bottom:4px;">Nombre del titular</div><input class="inp" placeholder="Como aparece en la tarjeta" oninput="document.getElementById('preview-name').textContent=this.value.toUpperCase()||'NOMBRE TITULAR'" /></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div><div class="label" style="margin-bottom:4px;">Vencimiento</div><input class="inp" placeholder="MM/AA" maxlength="5" oninput="fmtExp(this)" /></div>
+                <div><div class="label" style="margin-bottom:4px;">CVV</div><input class="inp" placeholder="•••" maxlength="4" type="password" /></div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:auto;" onclick="showToast('Tarjeta agregada');goTo('billetera')">Agregar tarjeta</button>
+          </div>
+        </div>
+
+        <!-- SOPORTE PROVEEDOR [4] -->
+        <div class="screen-inner" id="s-soporte-proveedor">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('perfil-proveedor')">←</button><div class="title">Contactar soporte</div></div>
+            <button class="btn btn-primary" style="width:100%;" onclick="goTo('opciones-soporte-prov')">Contactar a soporte</button>
+            <div class="divider"></div>
+            <div class="section-title">Ayuda con servicio prestado</div>
+            <div style="font-size:11px;color:var(--text-3);">Selecciona un servicio para reportar un problema</div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
+              <div class="card row" style="gap:10px;cursor:pointer;" onclick="setChatServicio('Conductor Tesla Model 3 — Hoy 14:32');goTo('chat-soporte')">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · Tesla Model 3</div><div style="font-size:10px;color:var(--text-3);">Hoy 14:32 · 60 min · $2.100</div></div>
+                <div style="font-size:18px;color:var(--text-3);">›</div>
+              </div>
+              <div class="card row" style="gap:10px;cursor:pointer;" onclick="setChatServicio('Conductor BYD Atto 3 — Hoy 11:15');goTo('chat-soporte')">
+                <div style="width:32px;height:32px;border-radius:10px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="var(--green)" stroke-width="2"/><path d="M9 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M15 11V7" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><path d="M12 18v3" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg></div>
+                <div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · BYD Atto 3</div><div style="font-size:10px;color:var(--text-3);">Hoy 11:15 · 30 min · $1.050</div></div>
+                <div style="font-size:18px;color:var(--text-3);">›</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPCIONES SOPORTE PROVEEDOR [4] -->
+        <div class="screen-inner" id="s-opciones-soporte-prov">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('soporte-proveedor')">←</button><div class="title">Opciones soporte</div></div>
+            <div style="font-size:11px;color:var(--text-3);">¿Con qué necesitas ayuda?</div>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Tengo pagos pendientes o no recibí mis ingresos');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Pagos pendientes</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">No recibí ingresos por mis servicios</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Mi dispositivo no funciona o está dañado');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Dispositivo dañado o sin funcionar</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">El kit no enciende o no activa la carga</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Quiero solicitar un nuevo kit o reemplazo');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Solicitar reemplazo de kit</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">El equipo fue robado o necesita cambio</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Tuve un problema con un conductor en mi punto');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Problema con un conductor</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">Mal uso del punto o daños al enchufe</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+              <div class="card" style="cursor:pointer;" onclick="setOpcion('Quiero desactivar temporalmente mi punto de carga');goTo('chat-soporte')">
+                <div class="row-between"><div><div style="font-size:13px;font-weight:500;color:var(--text);">Desactivar mi punto temporalmente</div><div style="font-size:10px;color:var(--text-3);margin-top:2px;">Vacaciones, mantención u otro motivo</div></div><div style="font-size:18px;color:var(--text-3);">›</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INGRESOS [5] -->
+        <div class="screen-inner" id="s-ingresos">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('perfil-proveedor')">←</button><div class="title">Ingresos</div></div>
+            <div style="background:var(--green);border-radius:16px;padding:20px;text-align:center;">
+              <div style="font-size:11px;color:#9FE1CB;margin-bottom:4px;">Ingresos mes actual — Abril 2026</div>
+              <div style="font-size:36px;font-weight:700;color:white;">$124.300</div>
+              <div style="font-size:10px;color:#9FE1CB;margin-top:4px;">86 servicios prestados</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="metric"><div style="font-size:18px;font-weight:600;color:var(--green);">$1.142k</div><div class="metric-lbl">Acumulado año</div></div>
+              <div class="metric"><div style="font-size:18px;font-weight:600;color:var(--text);">$108.500</div><div class="metric-lbl">Mes anterior</div></div>
+            </div>
+            <div class="section-title">Detalle mes actual</div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
+              <div class="card row" style="gap:10px;justify-content:space-between;">
+                <div><div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · Tesla Model 3</div><div style="font-size:10px;color:var(--text-3);">Hoy 14:32 · 60 min · Carga libre</div></div>
+                <div style="font-size:13px;font-weight:600;color:var(--green);white-space:nowrap;">+$2.100</div>
+              </div>
+              <div class="card row" style="gap:10px;justify-content:space-between;">
+                <div><div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · BYD Atto 3</div><div style="font-size:10px;color:var(--text-3);">Hoy 11:15 · 30 min · Prepago</div></div>
+                <div style="font-size:13px;font-weight:600;color:var(--green);white-space:nowrap;">+$1.050</div>
+              </div>
+              <div class="card row" style="gap:10px;justify-content:space-between;">
+                <div><div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · MG ZS EV</div><div style="font-size:10px;color:var(--text-3);">Ayer 18:45 · Solo estacionamiento</div></div>
+                <div style="font-size:13px;font-weight:600;color:var(--green);white-space:nowrap;">+$900</div>
+              </div>
+              <div class="card row" style="gap:10px;justify-content:space-between;">
+                <div><div style="font-size:12px;font-weight:500;color:var(--text);">Conductor · Nissan Leaf</div><div style="font-size:10px;color:var(--text-3);">Lunes · 60 min · Prepago</div></div>
+                <div style="font-size:13px;font-weight:600;color:var(--green);white-space:nowrap;">+$2.100</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOLICITAR KIT [6] -->
+        <div class="screen-inner" id="s-solicitar-kit">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc">
+            <div class="row"><button class="back-btn" onclick="goTo('perfil-proveedor')">←</button><div class="title">Solicitar kit</div></div>
+            <div class="card-green">
+              <div style="font-size:12px;font-weight:600;color:#085041;margin-bottom:4px;">¿Cómo funciona?</div>
+              <div style="font-size:11px;color:var(--green-dark);line-height:1.6;">Solicita un kit para que nuestros técnicos vayan a instalarlo en tu punto de carga. Sin costo inicial — Pluggi descuenta el kit de tus primeros ingresos.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div><div class="label" style="margin-bottom:4px;">Dirección</div><input class="inp" placeholder="Calle y número" /></div>
+              <div><div class="label" style="margin-bottom:4px;">Comuna</div><input class="inp" placeholder="Ej: Providencia" /></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div><div class="label" style="margin-bottom:4px;">Nombre contacto</div><input class="inp" placeholder="Tu nombre" /></div>
+                <div><div class="label" style="margin-bottom:4px;">Teléfono</div><input class="inp" placeholder="+56 9..." type="tel" /></div>
+              </div>
+              <div><div class="label" style="margin-bottom:4px;">Horario preferido para visita técnica</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <div class="bloque on" onclick="selectHorario(this)">Mañana</div>
+                  <div class="bloque" onclick="selectHorario(this)">Tarde</div>
+                  <div class="bloque" onclick="selectHorario(this)">Noche</div>
+                  <div class="bloque" onclick="selectHorario(this)">Fin de semana</div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:auto;" onclick="showToast('Solicitud enviada. Te contactaremos pronto');goTo('perfil-proveedor')">Solicitar kit</button>
+          </div>
+        </div>
+
+        <!-- CONECTAR KIT [7] -->
+        <div class="screen-inner" id="s-conectar-kit">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="align-items:center;gap:14px;">
+            <div class="row" style="width:100%;"><button class="back-btn" onclick="goTo('perfil-proveedor')">←</button><div class="title">Conectar kit a mi negocio</div></div>
+            <div style="font-size:11px;color:var(--text-3);text-align:center;width:100%;">Escanea el QR del dispositivo instalado en tu punto de carga para vincularlo a tu cuenta</div>
+            <div style="width:160px;height:160px;border:2.5px solid var(--green);border-radius:20px;position:relative;display:flex;align-items:center;justify-content:center;background:#f7f9f8;">
+              <div style="position:absolute;top:8px;left:8px;width:22px;height:22px;border-top:3px solid var(--green);border-left:3px solid var(--green);border-radius:4px 0 0 0;"></div>
+              <div style="position:absolute;top:8px;right:8px;width:22px;height:22px;border-top:3px solid var(--green);border-right:3px solid var(--green);border-radius:0 4px 0 0;"></div>
+              <div style="position:absolute;bottom:8px;left:8px;width:22px;height:22px;border-bottom:3px solid var(--green);border-left:3px solid var(--green);border-radius:0 0 0 4px;"></div>
+              <div style="position:absolute;bottom:8px;right:8px;width:22px;height:22px;border-bottom:3px solid var(--green);border-right:3px solid var(--green);border-radius:0 0 4px 0;"></div>
+              <div style="text-align:center;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" style="display:block;margin:0 auto 6px;opacity:0.3;"><path d="M2 2h7v7H2zM15 2h7v7h-7zM2 15h7v7H2zM15 15h4v2h-4zM21 15v2M15 19v2M19 19h2M19 21h2" stroke="var(--green)" stroke-width="1.5"/></svg>
+                <div style="font-size:10px;color:var(--text-3);">Cámara activa</div>
+              </div>
+            </div>
+            <div class="card" style="width:100%;">
+              <div style="font-size:11px;color:var(--text-2);text-align:center;">o ingresa el código del dispositivo manualmente</div>
+              <input class="inp" style="margin-top:8px;text-align:center;letter-spacing:3px;font-weight:600;" placeholder="PL - XXXX" />
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:auto;" onclick="goTo('kit-conectado')">Confirmar conexión</button>
+          </div>
+        </div>
+
+        <!-- KIT CONECTADO ÉXITO [7] -->
+        <div class="screen-inner" id="s-kit-conectado">
+          <div class="sb" style="padding-top:28px;"><span style="font-size:9px;color:var(--text-3);">9:41</span><span style="font-size:9px;color:var(--text-3);">●●●</span></div>
+          <div class="sc" style="align-items:center;justify-content:center;gap:16px;text-align:center;">
+            <div style="width:90px;height:90px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;border:3px solid var(--green);">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;">¡QR conectado!</div>
+              <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:10px;">¡Comienza a ganar con Pluggi!</div>
+              <div style="font-size:12px;color:var(--text-2);line-height:1.6;max-width:230px;margin:0 auto;">Tu dispositivo PL-4821 está vinculado a tu cuenta. Ya está listo para recibir conductores y generar ingresos.</div>
+            </div>
+            <div style="background:#f7f9f8;border-radius:14px;padding:14px 20px;width:100%;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text-3);">Dispositivo</div><div style="font-size:13px;font-weight:600;color:var(--text);">PL-4821</div></div>
+                <div style="text-align:center;"><div style="font-size:9px;color:var(--text-3);">Estado</div><div class="pill pill-green" style="display:inline-block;margin-top:2px;">Activo</div></div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="goTo('perfil-proveedor')">Volver al perfil</button>
+          </div>
+        </div>
       </div><!-- /screen -->
     </div><!-- /device -->
   </div><!-- /phone-wrap -->
@@ -821,43 +1359,40 @@
   <div class="sidebar">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
       <div style="width:30px;height:30px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" fill="white"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="7" y="11" width="10" height="7" rx="2" stroke="white" stroke-width="1.8"/><path d="M9 11V7" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M15 11V7" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M12 18v3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
       </div>
       <div>
-        <div style="font-size:13px;font-weight:600;color:var(--text);">PachElectric</div>
+        <div style="font-size:14px;font-weight:700;color:var(--green-dark);">Pluggi</div>
         <div style="font-size:10px;color:var(--text-3);">Prototipo navegable</div>
       </div>
     </div>
     <h3>Flujo del usuario</h3>
     <div id="flow-steps">
-      <div class="flow-step active-step" onclick="goTo('onboarding')">
-        <div class="step-num">1</div>
-        <div class="step-info"><div class="step-name">Registro</div><div class="step-desc">Conductor o proveedor</div></div>
-      </div>
-      <div class="flow-step" onclick="goTo('mapa')">
-        <div class="step-num">2</div>
-        <div class="step-info"><div class="step-name">Mapa</div><div class="step-desc">Ver enchufes cercanos</div></div>
-      </div>
-      <div class="flow-step" onclick="goTo('qr')">
-        <div class="step-num">3</div>
-        <div class="step-info"><div class="step-name">Conectar</div><div class="step-desc">QR, código o mapa</div></div>
-      </div>
-      <div class="flow-step" onclick="goTo('tipo-carga')">
-        <div class="step-num">4</div>
-        <div class="step-info"><div class="step-name">Tipo de carga</div><div class="step-desc">Bloques o libre</div></div>
-      </div>
-      <div class="flow-step" onclick="goTo('carga-activa')">
-        <div class="step-num">5</div>
-        <div class="step-info"><div class="step-name">Carga activa</div><div class="step-desc">Temporizador en vivo</div></div>
-      </div>
-      <div class="flow-step" onclick="goTo('feedback')">
-        <div class="step-num">6</div>
-        <div class="step-info"><div class="step-name">Evaluación</div><div class="step-desc">Resumen y feedback</div></div>
-      </div>
-      <div class="flow-step" onclick="goTo('perfil')">
-        <div class="step-num">7</div>
-        <div class="step-info"><div class="step-name">Perfil</div><div class="step-desc">Historial de cargas</div></div>
-      </div>
+      <div class="flow-step active-step" onclick="goTo('onboarding')"><div class="step-num">1</div><div class="step-info"><div class="step-name">Registro</div><div class="step-desc">Conductor o proveedor</div></div></div>
+      <div class="flow-step" onclick="goTo('mapa')"><div class="step-num">2</div><div class="step-info"><div class="step-name">Mapa</div><div class="step-desc">Ver enchufes cercanos</div></div></div>
+      <div class="flow-step" onclick="goTo('gps')"><div class="step-num">3</div><div class="step-info"><div class="step-name">Navegación GPS</div><div class="step-desc">Ruta al punto</div></div></div>
+      <div class="flow-step" onclick="goTo('qr')"><div class="step-num">4</div><div class="step-info"><div class="step-name">Conectar QR</div><div class="step-desc">Escanear dispositivo</div></div></div>
+      <div class="flow-step" onclick="goTo('tipo-carga')"><div class="step-num">5</div><div class="step-info"><div class="step-name">Tipo de carga</div><div class="step-desc">Bloques, libre o estac.</div></div></div>
+      <div class="flow-step" onclick="goTo('confirmacion')"><div class="step-num">6</div><div class="step-info"><div class="step-name">Confirmación</div><div class="step-desc">Resumen y pago</div></div></div>
+      <div class="flow-step" onclick="goTo('conectar')"><div class="step-num">7</div><div class="step-info"><div class="step-name">Conectar vehículo</div><div class="step-desc">Enchufa el cable</div></div></div>
+      <div class="flow-step" onclick="goTo('carga-activa')"><div class="step-num">8</div><div class="step-info"><div class="step-name">Carga activa</div><div class="step-desc">Temporizador en vivo</div></div></div>
+      <div class="flow-step" onclick="goTo('feedback')"><div class="step-num">9</div><div class="step-info"><div class="step-name">Evaluación</div><div class="step-desc">Resumen y feedback</div></div></div>
+      <div class="flow-step" onclick="goTo('perfil')"><div class="step-num">10</div><div class="step-info"><div class="step-name">Perfil conductor</div><div class="step-desc">Historial de cargas</div></div></div>
+      <div class="flow-step" onclick="goTo('perfil-proveedor')"><div class="step-num">11</div><div class="step-info"><div class="step-name">Perfil proveedor</div><div class="step-desc">Servicios e ingresos</div></div></div>
+      <div style="font-size:9px;font-weight:600;color:var(--text-3);padding:8px 0 4px;letter-spacing:0.5px;">CONDUCTOR — SOPORTE</div>
+      <div class="flow-step" onclick="goTo('soporte-conductor')"><div class="step-num">12</div><div class="step-info"><div class="step-name">Contactar soporte</div><div class="step-desc">Conductor</div></div></div>
+      <div class="flow-step" onclick="goTo('opciones-soporte')"><div class="step-num">13</div><div class="step-info"><div class="step-name">Opciones soporte</div><div class="step-desc">5 motivos frecuentes</div></div></div>
+      <div class="flow-step" onclick="goTo('chat-soporte')"><div class="step-num">14</div><div class="step-info"><div class="step-name">Chat soporte</div><div class="step-desc">Conversación en vivo</div></div></div>
+      <div style="font-size:9px;font-weight:600;color:var(--text-3);padding:8px 0 4px;letter-spacing:0.5px;">CONDUCTOR — BILLETERA</div>
+      <div class="flow-step" onclick="goTo('billetera')"><div class="step-num">15</div><div class="step-info"><div class="step-name">Billetera</div><div class="step-desc">Métodos de pago</div></div></div>
+      <div class="flow-step" onclick="goTo('nueva-tarjeta')"><div class="step-num">16</div><div class="step-info"><div class="step-name">Nueva tarjeta</div><div class="step-desc">Agregar método de pago</div></div></div>
+      <div style="font-size:9px;font-weight:600;color:var(--text-3);padding:8px 0 4px;letter-spacing:0.5px;">PROVEEDOR</div>
+      <div class="flow-step" onclick="goTo('soporte-proveedor')"><div class="step-num">17</div><div class="step-info"><div class="step-name">Contactar soporte prov</div><div class="step-desc">Proveedor</div></div></div>
+      <div class="flow-step" onclick="goTo('opciones-soporte-prov')"><div class="step-num">18</div><div class="step-info"><div class="step-name">Opciones soporte prov</div><div class="step-desc">5 problemas frecuentes</div></div></div>
+      <div class="flow-step" onclick="goTo('ingresos')"><div class="step-num">19</div><div class="step-info"><div class="step-name">Ingresos</div><div class="step-desc">KPIs y detalle del mes</div></div></div>
+      <div class="flow-step" onclick="goTo('solicitar-kit')"><div class="step-num">20</div><div class="step-info"><div class="step-name">Solicitar kit</div><div class="step-desc">Formulario de instalación</div></div></div>
+      <div class="flow-step" onclick="goTo('conectar-kit')"><div class="step-num">21</div><div class="step-info"><div class="step-name">Conectar kit a mi negocio</div><div class="step-desc">Lector QR del dispositivo</div></div></div>
+      <div class="flow-step" onclick="goTo('kit-conectado')"><div class="step-num">22</div><div class="step-info"><div class="step-name">QR conectado</div><div class="step-desc">Pantalla de éxito</div></div></div>
     </div>
     <div style="margin-top:20px;padding:12px;background:var(--green-light);border-radius:10px;">
       <div style="font-size:11px;font-weight:600;color:var(--green-dark);margin-bottom:4px;">Tip de uso</div>
@@ -867,15 +1402,15 @@
 </div>
 
 <script>
-  const screens = ['onboarding','mapa','qr','tipo-carga','carga-activa','feedback','perfil'];
-  const stepMap = { onboarding:0, mapa:1, qr:2, 'tipo-carga':3, 'carga-activa':4, feedback:5, perfil:6 };
+  const screens = ['onboarding','mapa','gps','qr','tipo-carga','confirmacion','conectar','carga-activa','feedback','perfil','soporte-conductor','opciones-soporte','chat-soporte','billetera','nueva-tarjeta','perfil-proveedor','soporte-proveedor','opciones-soporte-prov','ingresos','solicitar-kit','conectar-kit','kit-conectado'];
+  const stepMap = { onboarding:0, mapa:1, gps:2, qr:3, 'tipo-carga':4, confirmacion:5, conectar:6, 'carga-activa':7, feedback:8, perfil:9, 'soporte-conductor':10, 'opciones-soporte':11, 'chat-soporte':12, billetera:13, 'nueva-tarjeta':14, 'perfil-proveedor':15, 'soporte-proveedor':16, 'opciones-soporte-prov':17, ingresos:18, 'solicitar-kit':19, 'conectar-kit':20, 'kit-conectado':21 };
   let currentScreen = 'onboarding';
   let timerInterval = null;
-  let timerSecs = 600;
-  let totalSecs = 600;
+  let timerSecs = 1800;
+  let totalSecs = 1800;
   let selectedTipo = 'bloques';
-  let selectedBloques = 10;
-  let precios = { 10:350, 20:700, 30:1050, 40:1400, 60:2100 };
+  let selectedBloques = 30;
+  let precios = { 30:1050, 60:2100, 90:3150, 120:4200 };
 
   function goTo(s) {
     document.querySelectorAll('.screen-inner').forEach(el => el.classList.remove('active'));
@@ -886,10 +1421,24 @@
     if (s === 'carga-activa') startTimer();
     else stopTimer();
     if (s === 'mapa') document.getElementById('map-popup').classList.remove('visible');
+    if (s === 'confirmacion') {
+      const mods = { bloques: 'Prepago · ' + selectedBloques + ' min', libre: 'Carga libre', estacionamiento: 'Solo estacionamiento' };
+      const tarifas = { bloques: '$35/min', libre: '$35/min desde min 11', estacionamiento: '$30/min desde min 11' };
+      const totales = { bloques: '$' + (precios[selectedBloques]||1050).toLocaleString('es-CL'), libre: '$350 + variable', estacionamiento: '$300 + variable' };
+      const durs = { bloques: selectedBloques + ' minutos', libre: 'Variable', estacionamiento: 'Variable' };
+      const cm = document.getElementById('conf-modalidad');
+      const ct = document.getElementById('conf-tarifa');
+      const cto = document.getElementById('conf-total');
+      const cd = document.getElementById('conf-duracion');
+      if(cm) cm.textContent = mods[selectedTipo] || '';
+      if(ct) ct.textContent = tarifas[selectedTipo] || '';
+      if(cto) cto.textContent = totales[selectedTipo] || '';
+      if(cd) cd.textContent = durs[selectedTipo] || '';
+    }
   }
 
   function updateMobileNav(s) {
-    const map = { onboarding:'mn-onboarding', mapa:'mn-mapa', qr:'mn-qr', 'tipo-carga':'mn-tipo-carga', 'carga-activa':'mn-carga-activa', feedback:'mn-carga-activa', perfil:'mn-perfil' };
+    const map = { onboarding:'mn-onboarding', mapa:'mn-mapa', gps:'mn-mapa', qr:'mn-qr', 'tipo-carga':'mn-tipo-carga', confirmacion:'mn-tipo-carga', conectar:'mn-carga-activa', 'carga-activa':'mn-carga-activa', feedback:'mn-carga-activa', perfil:'mn-perfil', 'perfil-proveedor':'mn-perfil' };
     document.querySelectorAll('.mnb').forEach(el => el.classList.remove('on'));
     const target = document.getElementById(map[s]);
     if (target) target.classList.add('on');
@@ -943,21 +1492,26 @@
 
   function selectTipo(tipo) {
     selectedTipo = tipo;
-    const ob = document.getElementById('opt-bloques');
-    const ol = document.getElementById('opt-libre');
-    const bb = document.getElementById('badge-bloques');
-    const bl = document.getElementById('badge-libre');
+    const opts = ['opt-bloques','opt-libre','opt-estacionamiento'];
+    const badges = ['badge-bloques','badge-libre','badge-estacionamiento'];
+    opts.forEach((id,i) => {
+      const el = document.getElementById(id);
+      const badge = document.getElementById(badges[i]);
+      if (el) { el.classList.remove('selected'); }
+      if (badge) { badge.textContent = 'Disponible'; badge.className = 'pill pill-gray'; }
+    });
+    const sel = document.getElementById('opt-' + tipo);
+    const selBadge = document.getElementById('badge-' + tipo);
+    if (sel) sel.classList.add('selected');
+    if (selBadge) { selBadge.textContent = 'Seleccionado'; selBadge.className = 'pill pill-green'; }
     if (tipo === 'bloques') {
-      ob.classList.add('selected'); ol.classList.remove('selected');
-      bb.textContent = 'Seleccionado'; bb.className = 'pill pill-green';
-      bl.textContent = 'Disponible'; bl.className = 'pill pill-gray';
       updatePrecio();
-    } else {
-      ol.classList.add('selected'); ob.classList.remove('selected');
-      bl.textContent = 'Seleccionado'; bl.className = 'pill pill-green';
-      bb.textContent = 'Disponible'; bb.className = 'pill pill-gray';
+    } else if (tipo === 'libre') {
       document.getElementById('precio-total').textContent = '$350';
       document.getElementById('modalidad-label').textContent = 'Libre · $350 fijo + $35/min desde min 11';
+    } else if (tipo === 'estacionamiento') {
+      document.getElementById('precio-total').textContent = '$300';
+      document.getElementById('modalidad-label').textContent = 'Estacionamiento · $300 fijo + $30/min desde min 11';
     }
   }
 
@@ -976,8 +1530,8 @@
   }
 
   function confirmarPago() {
-    showToast('Pago procesado. Dispositivo activado');
-    setTimeout(() => goTo('carga-activa'), 800);
+    showToast('Pago confirmado');
+    setTimeout(() => goTo('conectar'), 800);
   }
 
   function startTimer() {
@@ -1024,6 +1578,41 @@
     showToast('+10 min agregados');
   }
 
+  let prevScreen = 'soporte-conductor';
+  let chatMsgInicial = '';
+
+  function setPrevScreen(s) { prevScreen = s; }
+
+  function setChatServicio(nombre) {
+    chatMsgInicial = 'Tengo un problema con el servicio: ' + nombre;
+    const el = document.getElementById('chat-primer-msg');
+    if (el) el.textContent = chatMsgInicial;
+  }
+
+  function setOpcion(opcion) {
+    chatMsgInicial = opcion;
+    const el = document.getElementById('chat-primer-msg');
+    if (el) el.textContent = chatMsgInicial;
+  }
+
+  function fmtCard(input) {
+    let v = input.value.replace(/\D/g,'').substring(0,16);
+    input.value = v.replace(/(\d{4})/g,'$1 ').trim();
+    document.getElementById('preview-num').textContent = input.value || '•••• •••• •••• ••••';
+  }
+
+  function fmtExp(input) {
+    let v = input.value.replace(/\D/g,'');
+    if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2,4);
+    input.value = v;
+    document.getElementById('preview-exp').textContent = input.value || 'MM/AA';
+  }
+
+  function selectHorario(el) {
+    document.querySelectorAll('#s-solicitar-kit .bloque').forEach(b => b.classList.remove('on'));
+    el.classList.add('on');
+  }
+
   function rateStar(n) {
     document.querySelectorAll('.star').forEach((el, i) => {
       el.classList.toggle('lit', i < n);
@@ -1062,7 +1651,7 @@
 
 <!-- Mobile floating nav -->
 <div class="mobile-nav" id="mobile-nav">
-  <button class="mnb on" id="mn-onboarding" onclick="goTo('onboarding')">Registro</button>
+  <button class="mnb on" id="mn-onboarding" onclick="goTo('onboarding')">Inicio</button>
   <button class="mnb" id="mn-mapa" onclick="goTo('mapa')">Mapa</button>
   <button class="mnb" id="mn-qr" onclick="goTo('qr')">QR</button>
   <button class="mnb" id="mn-tipo-carga" onclick="goTo('tipo-carga')">Carga</button>
