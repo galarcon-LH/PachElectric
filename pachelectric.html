@@ -177,8 +177,8 @@
     border: none;
     color: #999;
     font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    padding: 6px 10px;
+    font-size: 9px;
+    padding: 6px 7px;
     border-radius: 30px;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
@@ -908,8 +908,8 @@
             <div class="nav-bar">
               <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Inicio</div>
               <div class="ni" onclick="goTo('mapa')"><div class="ni-dot"></div>Mapa</div>
-              <div class="ni" onclick="goTo('perfil')"><div class="ni-dot"></div>Historial</div>
               <div class="ni on" onclick="goTo('perfil')"><div class="ni-dot on"></div>Conductor</div>
+              <div class="ni" onclick="goTo('perfil-proveedor')"><div class="ni-dot"></div>Proveedor</div>
             </div>
           </div>
         </div>
@@ -1823,7 +1823,7 @@
   }
 
   function updateMobileNav(s) {
-    const map = { onboarding:'mn-onboarding', mapa:'mn-mapa', gps:'mn-mapa', qr:'mn-qr', 'tipo-carga':'mn-tipo-carga', confirmacion:'mn-tipo-carga', conectar:'mn-carga-activa', 'carga-activa':'mn-carga-activa', feedback:'mn-carga-activa', perfil:'mn-perfil', 'perfil-proveedor':'mn-perfil' };
+    const map = { onboarding:'mn-onboarding', mapa:'mn-mapa', gps:'mn-mapa', qr:'mn-qr', 'tipo-carga':'mn-tipo-carga', confirmacion:'mn-tipo-carga', conectar:'mn-carga-activa', 'carga-activa':'mn-carga-activa', feedback:'mn-carga-activa', perfil:'mn-perfil', 'soporte-conductor':'mn-perfil', billetera:'mn-perfil', 'nueva-tarjeta':'mn-perfil', 'perfil-proveedor':'mn-perfil-proveedor', 'soporte-proveedor':'mn-perfil-proveedor', ingresos:'mn-perfil-proveedor', 'solicitar-kit':'mn-perfil-proveedor', 'conectar-kit':'mn-perfil-proveedor', 'kit-conectado':'mn-perfil-proveedor' };
     document.querySelectorAll('.mnb').forEach(el => el.classList.remove('on'));
     const target = document.getElementById(map[s]);
     if (target) target.classList.add('on');
@@ -2110,7 +2110,8 @@
   <button class="mnb" id="mn-qr" onclick="goTo('qr')">QR</button>
   <button class="mnb" id="mn-tipo-carga" onclick="goTo('tipo-carga')">Carga</button>
   <button class="mnb" id="mn-carga-activa" onclick="goTo('carga-activa')">Activa</button>
-  <button class="mnb" id="mn-perfil" onclick="goTo('perfil')">Perfil</button>
+  <button class="mnb" id="mn-perfil" onclick="goTo('perfil')">Conductor</button>
+  <button class="mnb" id="mn-perfil-proveedor" onclick="goTo('perfil-proveedor')">Proveedor</button>
 </div>
 
 </body>
